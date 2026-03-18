@@ -51,25 +51,79 @@ public class ZabbixApiClient : IZabbixApiClient
     return result;
   }
 
-  public Task<IReadOnlyList<ZabbixHost>> GetHostsAsync(
+  public async Task<IReadOnlyList<ZabbixHost>> GetHostsAsync(
       ZabbixInstanceOptions options,
       string authToken,
       string? sourceGroupName,
       string? hostNameContains,
       CancellationToken cancellationToken = default)
   {
-    _logger.LogInformation("GetHostsAsync called for {Url}", options.Url);
-    throw new NotImplementedException("Host retrieval will be implemented in the next step.");
+    _logger.LogInformation("Retrieving hosts from {Url}", options.Url);
+
+    var rawHosts = await SendRequestAsync<List<HostGetResult>>(
+        url: options.Url,
+        method: "host.get",
+        @params: new
+        {
+          output = new[] { "hostid", "host", "name", "status" },
+          selectHostGroups = new[] { "groupid", "name" },
+          selectInterfaces = new[] { "type", "ip", "dns", "port", "useip", "main" },
+          selectTags = "extend"
+        },
+        authToken: authToken,
+        cancellationToken: cancellationToken);
+
+    var mappedHosts = rawHosts
+        .Select(MapHost)
+        .ToList();
+
+    if (!string.IsNullOrWhiteSpace(sourceGroupName))
+    {
+      mappedHosts = mappedHosts
+          .Where(x => x.Groups.Any(g =>
+              string.Equals(g.Name, sourceGroupName, StringComparison.OrdinalIgnoreCase)))
+          .ToList();
+    }
+
+    if (!string.IsNullOrWhiteSpace(hostNameContains))
+    {
+      var term = hostNameContains.Trim();
+
+      mappedHosts = mappedHosts
+          .Where(x =>
+              x.Host.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+              x.VisibleName.Contains(term, StringComparison.OrdinalIgnoreCase))
+          .ToList();
+    }
+
+    _logger.LogInformation("Retrieved {Count} hosts after filtering.", mappedHosts.Count);
+
+    return mappedHosts;
   }
 
-  public Task<bool> HostExistsAsync(
+  public async Task<bool> HostExistsAsync(
       ZabbixInstanceOptions options,
       string authToken,
       string hostName,
       CancellationToken cancellationToken = default)
   {
-    _logger.LogInformation("HostExistsAsync called for {HostName}", hostName);
-    throw new NotImplementedException("Destination lookup will be implemented in the next step.");
+    _logger.LogInformation("Checking if host exists in destination: {HostName}", hostName);
+
+    var rawHosts = await SendRequestAsync<List<HostExistsResult>>(
+        url: options.Url,
+        method: "host.get",
+        @params: new
+        {
+          output = new[] { "hostid", "host" },
+          filter = new
+          {
+            host = new[] { hostName }
+          }
+        },
+        authToken: authToken,
+        cancellationToken: cancellationToken);
+
+    return rawHosts.Count > 0;
   }
 
   public Task<string?> CreateHostAsync(
@@ -81,6 +135,53 @@ public class ZabbixApiClient : IZabbixApiClient
   {
     _logger.LogInformation("CreateHostAsync called for {Host}", host.Host);
     throw new NotImplementedException("Host creation will be implemented in the next step.");
+  }
+
+  private static ZabbixHost MapHost(HostGetResult raw)
+  {
+    var groups = raw.HostGroups?
+        .Select(x => new ZabbixHostGroup(
+            x.GroupId ?? string.Empty,
+            x.Name ?? string.Empty))
+        .ToList()
+        ?? new List<ZabbixHostGroup>();
+
+    var interfaces = raw.Interfaces?
+        .Select(x => new ZabbixHostInterface(
+            Type: ParseInt(x.Type),
+            Ip: x.Ip ?? string.Empty,
+            Dns: x.Dns ?? string.Empty,
+            Port: x.Port ?? string.Empty,
+            UseIp: ParseBool(x.UseIp),
+            Main: ParseBool(x.Main)))
+        .ToList()
+        ?? new List<ZabbixHostInterface>();
+
+    var tags = raw.Tags?
+        .Select(x => new ZabbixHostTag(
+            x.Tag ?? string.Empty,
+            x.Value ?? string.Empty))
+        .ToList()
+        ?? new List<ZabbixHostTag>();
+
+    return new ZabbixHost(
+        HostId: raw.HostId ?? string.Empty,
+        Host: raw.Host ?? string.Empty,
+        VisibleName: string.IsNullOrWhiteSpace(raw.Name) ? raw.Host ?? string.Empty : raw.Name,
+        Status: ParseInt(raw.Status),
+        Groups: groups,
+        Interfaces: interfaces,
+        Tags: tags);
+  }
+
+  private static int ParseInt(string? value)
+  {
+    return int.TryParse(value, out var parsed) ? parsed : 0;
+  }
+
+  private static bool ParseBool(string? value)
+  {
+    return value == "1";
   }
 
   private async Task<T> SendRequestAsync<T>(
@@ -177,5 +278,77 @@ public class ZabbixApiClient : IZabbixApiClient
 
     [JsonPropertyName("data")]
     public string? Data { get; init; }
+  }
+
+  private sealed class HostGetResult
+  {
+    [JsonPropertyName("hostid")]
+    public string? HostId { get; init; }
+
+    [JsonPropertyName("host")]
+    public string? Host { get; init; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
+
+    [JsonPropertyName("status")]
+    public string? Status { get; init; }
+
+    [JsonPropertyName("hostgroups")]
+    public List<HostGroupResult>? HostGroups { get; init; }
+
+    [JsonPropertyName("interfaces")]
+    public List<HostInterfaceResult>? Interfaces { get; init; }
+
+    [JsonPropertyName("tags")]
+    public List<HostTagResult>? Tags { get; init; }
+  }
+
+  private sealed class HostExistsResult
+  {
+    [JsonPropertyName("hostid")]
+    public string? HostId { get; init; }
+
+    [JsonPropertyName("host")]
+    public string? Host { get; init; }
+  }
+
+  private sealed class HostGroupResult
+  {
+    [JsonPropertyName("groupid")]
+    public string? GroupId { get; init; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
+  }
+
+  private sealed class HostInterfaceResult
+  {
+    [JsonPropertyName("type")]
+    public string? Type { get; init; }
+
+    [JsonPropertyName("ip")]
+    public string? Ip { get; init; }
+
+    [JsonPropertyName("dns")]
+    public string? Dns { get; init; }
+
+    [JsonPropertyName("port")]
+    public string? Port { get; init; }
+
+    [JsonPropertyName("useip")]
+    public string? UseIp { get; init; }
+
+    [JsonPropertyName("main")]
+    public string? Main { get; init; }
+  }
+
+  private sealed class HostTagResult
+  {
+    [JsonPropertyName("tag")]
+    public string? Tag { get; init; }
+
+    [JsonPropertyName("value")]
+    public string? Value { get; init; }
   }
 }

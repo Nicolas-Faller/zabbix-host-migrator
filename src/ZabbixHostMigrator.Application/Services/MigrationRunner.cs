@@ -54,7 +54,27 @@ public class MigrationRunner : IMigrationRunner
         "Destination authentication succeeded. Token length: {Length}",
         destinationToken.Length);
 
-    _logger.LogInformation("Authentication step completed successfully.");
+    var hosts = await _zabbixApiClient.GetHostsAsync(
+        source,
+        sourceToken,
+        migration.SourceGroupName,
+        migration.HostNameContains,
+        cancellationToken);
+
+    _logger.LogInformation("Retrieved {Count} source hosts.", hosts.Count);
+
+    foreach (var host in hosts.Take(5))
+    {
+      _logger.LogInformation(
+          "Host: {Host} | VisibleName: {VisibleName} | Groups: {GroupCount} | Interfaces: {InterfaceCount} | Tags: {TagCount}",
+          host.Host,
+          host.VisibleName,
+          host.Groups.Count,
+          host.Interfaces.Count,
+          host.Tags.Count);
+    }
+
+    _logger.LogInformation("Host retrieval step completed successfully.");
   }
 
   private static void ValidateInstance(ZabbixInstanceOptions options, string sectionName)

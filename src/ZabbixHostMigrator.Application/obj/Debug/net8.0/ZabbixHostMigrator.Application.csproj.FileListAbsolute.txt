@@ -1,0 +1,15 @@
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.csproj.AssemblyReference.cache
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.AssemblyInfoInputs.cache
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.AssemblyInfo.cs
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.csproj.CoreCompileInputs.cache
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/bin/Debug/net8.0/ZabbixHostMigrator.Application.deps.json
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/bin/Debug/net8.0/ZabbixHostMigrator.Application.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/bin/Debug/net8.0/ZabbixHostMigrator.Application.pdb
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/bin/Debug/net8.0/ZabbixHostMigrator.Domain.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/bin/Debug/net8.0/ZabbixHostMigrator.Domain.pdb
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHo.C4BCDB8D.Up2Date
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/refint/ZabbixHostMigrator.Application.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.pdb
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ref/ZabbixHostMigrator.Application.dll

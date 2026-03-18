@@ -1,0 +1,11 @@
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/bin/Debug/net8.0/ZabbixHostMigrator.Domain.deps.json
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/bin/Debug/net8.0/ZabbixHostMigrator.Domain.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/bin/Debug/net8.0/ZabbixHostMigrator.Domain.pdb
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.AssemblyInfoInputs.cache
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.AssemblyInfo.cs
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.csproj.CoreCompileInputs.cache
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/refint/ZabbixHostMigrator.Domain.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.pdb
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ref/ZabbixHostMigrator.Domain.dll

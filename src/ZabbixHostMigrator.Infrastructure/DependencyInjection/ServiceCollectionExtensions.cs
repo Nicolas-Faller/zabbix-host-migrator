@@ -1,7 +1,9 @@
 using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 using ZabbixHostMigrator.Application.Abstractions.Clients;
+using ZabbixHostMigrator.Application.Abstractions.Services;
 using ZabbixHostMigrator.Infrastructure.Clients;
+using ZabbixHostMigrator.Infrastructure.Reports;
 
 namespace ZabbixHostMigrator.Infrastructure.DependencyInjection;
 
@@ -16,6 +18,8 @@ public static class ServiceCollectionExtensions
       client.DefaultRequestHeaders.Accept.Add(
               new MediaTypeWithQualityHeaderValue("application/json"));
     });
+
+    services.AddScoped<IMigrationReportWriter, JsonMigrationReportWriter>();
 
     return services;
   }

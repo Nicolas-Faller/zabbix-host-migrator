@@ -30,6 +30,13 @@ public class ZabbixApiClient : IZabbixApiClient
       ZabbixInstanceOptions options,
       CancellationToken cancellationToken = default)
   {
+    if (options.UseMock)
+    {
+      _logger.LogInformation("Mock authentication enabled for {Url}", options.Url);
+      await Task.Delay(50, cancellationToken);
+      return $"mock-token-{Guid.NewGuid():N}";
+    }
+
     _logger.LogInformation("Authenticating against {Url}", options.Url);
 
     var result = await SendRequestAsync<string>(
@@ -58,6 +65,35 @@ public class ZabbixApiClient : IZabbixApiClient
       string? hostNameContains,
       CancellationToken cancellationToken = default)
   {
+    if (options.UseMock)
+    {
+      _logger.LogInformation("Mock host retrieval enabled for {Url}", options.Url);
+
+      var mockHosts = CreateMockHosts();
+
+      if (!string.IsNullOrWhiteSpace(sourceGroupName))
+      {
+        mockHosts = mockHosts
+            .Where(x => x.Groups.Any(g =>
+                string.Equals(g.Name, sourceGroupName, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+      }
+
+      if (!string.IsNullOrWhiteSpace(hostNameContains))
+      {
+        var term = hostNameContains.Trim();
+
+        mockHosts = mockHosts
+            .Where(x =>
+                x.Host.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                x.VisibleName.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+      }
+
+      await Task.Delay(100, cancellationToken);
+      return mockHosts;
+    }
+
     _logger.LogInformation("Retrieving hosts from {Url}", options.Url);
 
     var rawHosts = await SendRequestAsync<List<HostGetResult>>(
@@ -107,6 +143,25 @@ public class ZabbixApiClient : IZabbixApiClient
       string hostName,
       CancellationToken cancellationToken = default)
   {
+    if (options.UseMock)
+    {
+      await Task.Delay(30, cancellationToken);
+
+      var existingHosts = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "db-prod-01"
+            };
+
+      var exists = existingHosts.Contains(hostName);
+
+      _logger.LogInformation(
+          "Mock destination lookup for {HostName}: Exists = {Exists}",
+          hostName,
+          exists);
+
+      return exists;
+    }
+
     _logger.LogInformation("Checking if host exists in destination: {HostName}", hostName);
 
     var rawHosts = await SendRequestAsync<List<HostExistsResult>>(
@@ -126,15 +181,111 @@ public class ZabbixApiClient : IZabbixApiClient
     return rawHosts.Count > 0;
   }
 
-  public Task<string?> CreateHostAsync(
+  public async Task<string?> CreateHostAsync(
       ZabbixInstanceOptions options,
       string authToken,
       ZabbixHost host,
       string? destinationGroupName,
       CancellationToken cancellationToken = default)
   {
+    if (options.UseMock)
+    {
+      await Task.Delay(80, cancellationToken);
+
+      var createdId = Random.Shared.Next(50000, 99999).ToString();
+
+      _logger.LogInformation(
+          "Mock host created in destination: {Host} -> {CreatedId}",
+          host.Host,
+          createdId);
+
+      return createdId;
+    }
+
     _logger.LogInformation("CreateHostAsync called for {Host}", host.Host);
-    throw new NotImplementedException("Host creation will be implemented in the next step.");
+    throw new NotImplementedException("Real host creation will be implemented in a later step.");
+  }
+
+  private static List<ZabbixHost> CreateMockHosts()
+  {
+    return new List<ZabbixHost>
+        {
+            new(
+                HostId: "10101",
+                Host: "web-prod-01",
+                VisibleName: "Web Prod 01",
+                Status: 0,
+                Groups: new List<ZabbixHostGroup>
+                {
+                    new("10", "Linux Servers")
+                },
+                Interfaces: new List<ZabbixHostInterface>
+                {
+                    new(1, "10.0.0.11", "", "10050", true, true)
+                },
+                Tags: new List<ZabbixHostTag>
+                {
+                    new("env", "prod"),
+                    new("role", "web")
+                }),
+
+            new(
+                HostId: "10102",
+                Host: "db-prod-01",
+                VisibleName: "Database Prod 01",
+                Status: 0,
+                Groups: new List<ZabbixHostGroup>
+                {
+                    new("10", "Linux Servers")
+                },
+                Interfaces: new List<ZabbixHostInterface>
+                {
+                    new(1, "10.0.0.21", "", "10050", true, true)
+                },
+                Tags: new List<ZabbixHostTag>
+                {
+                    new("env", "prod"),
+                    new("role", "database")
+                }),
+
+            new(
+                HostId: "10103",
+                Host: "web-dev-01",
+                VisibleName: "Web Dev 01",
+                Status: 0,
+                Groups: new List<ZabbixHostGroup>
+                {
+                    new("10", "Linux Servers")
+                },
+                Interfaces: new List<ZabbixHostInterface>
+                {
+                    new(1, "10.0.1.31", "", "10050", true, true)
+                },
+                Tags: new List<ZabbixHostTag>
+                {
+                    new("env", "dev"),
+                    new("role", "web")
+                }),
+
+            new(
+                HostId: "10104",
+                Host: "win-files-01",
+                VisibleName: "Windows Files 01",
+                Status: 0,
+                Groups: new List<ZabbixHostGroup>
+                {
+                    new("20", "Windows Servers")
+                },
+                Interfaces: new List<ZabbixHostInterface>
+                {
+                    new(1, "10.0.2.41", "", "10050", true, true)
+                },
+                Tags: new List<ZabbixHostTag>
+                {
+                    new("env", "prod"),
+                    new("role", "fileserver")
+                })
+        };
   }
 
   private static ZabbixHost MapHost(HostGetResult raw)

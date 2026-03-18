@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using ZabbixHostMigrator.Application.Abstractions.Clients;
 using ZabbixHostMigrator.Application.Abstractions.Services;
 using ZabbixHostMigrator.Application.DTOs;
+using ZabbixHostMigrator.Domain.ValueObjects;
 
 namespace ZabbixHostMigrator.Application.Services;
 
@@ -10,17 +11,20 @@ public class MigrationRunner : IMigrationRunner
 {
   private readonly ILogger<MigrationRunner> _logger;
   private readonly IZabbixApiClient _zabbixApiClient;
+  private readonly IMigrationReportWriter _migrationReportWriter;
   private readonly IOptionsMonitor<ZabbixInstanceOptions> _zabbixOptionsMonitor;
   private readonly IOptions<MigrationOptions> _migrationOptions;
 
   public MigrationRunner(
       ILogger<MigrationRunner> logger,
       IZabbixApiClient zabbixApiClient,
+      IMigrationReportWriter migrationReportWriter,
       IOptionsMonitor<ZabbixInstanceOptions> zabbixOptionsMonitor,
       IOptions<MigrationOptions> migrationOptions)
   {
     _logger = logger;
     _zabbixApiClient = zabbixApiClient;
+    _migrationReportWriter = migrationReportWriter;
     _zabbixOptionsMonitor = zabbixOptionsMonitor;
     _migrationOptions = migrationOptions;
   }
@@ -63,18 +67,111 @@ public class MigrationRunner : IMigrationRunner
 
     _logger.LogInformation("Retrieved {Count} source hosts.", hosts.Count);
 
-    foreach (var host in hosts.Take(5))
+    var results = new List<MigrationHostResult>();
+    var totalMigrated = 0;
+    var totalSkipped = 0;
+    var totalFailed = 0;
+
+    foreach (var host in hosts)
     {
-      _logger.LogInformation(
-          "Host: {Host} | VisibleName: {VisibleName} | Groups: {GroupCount} | Interfaces: {InterfaceCount} | Tags: {TagCount}",
-          host.Host,
-          host.VisibleName,
-          host.Groups.Count,
-          host.Interfaces.Count,
-          host.Tags.Count);
+      try
+      {
+        var existsInDestination = false;
+
+        if (migration.SkipIfHostExists)
+        {
+          existsInDestination = await _zabbixApiClient.HostExistsAsync(
+              destination,
+              destinationToken,
+              host.Host,
+              cancellationToken);
+        }
+
+        if (existsInDestination)
+        {
+          totalSkipped++;
+
+          results.Add(new MigrationHostResult(
+              Host: host.Host,
+              VisibleName: host.VisibleName,
+              Action: "Skipped",
+              Success: true,
+              Message: "Host already exists in destination.",
+              CreatedHostId: null));
+
+          continue;
+        }
+
+        if (migration.DryRun)
+        {
+          results.Add(new MigrationHostResult(
+              Host: host.Host,
+              VisibleName: host.VisibleName,
+              Action: "WouldCreate",
+              Success: true,
+              Message: "Dry run enabled. Host was not created.",
+              CreatedHostId: null));
+
+          continue;
+        }
+
+        var createdHostId = await _zabbixApiClient.CreateHostAsync(
+            destination,
+            destinationToken,
+            host,
+            migration.DestinationGroupName,
+            cancellationToken);
+
+        totalMigrated++;
+
+        results.Add(new MigrationHostResult(
+            Host: host.Host,
+            VisibleName: host.VisibleName,
+            Action: "Migrated",
+            Success: true,
+            Message: "Host created in destination.",
+            CreatedHostId: createdHostId));
+      }
+      catch (Exception ex)
+      {
+        totalFailed++;
+
+        results.Add(new MigrationHostResult(
+            Host: host.Host,
+            VisibleName: host.VisibleName,
+            Action: "Failed",
+            Success: false,
+            Message: ex.Message,
+            CreatedHostId: null));
+
+        _logger.LogError(ex, "Failed to process host {Host}", host.Host);
+      }
     }
 
-    _logger.LogInformation("Host retrieval step completed successfully.");
+    var summary = new MigrationExecutionResult(
+        TotalRead: hosts.Count,
+        TotalEligible: hosts.Count - totalSkipped,
+        TotalMigrated: totalMigrated,
+        TotalSkipped: totalSkipped,
+        TotalFailed: totalFailed);
+
+    var report = new MigrationReport(
+        SourceUrl: source.Url,
+        DestinationUrl: destination.Url,
+        DryRun: migration.DryRun,
+        GeneratedAtUtc: DateTime.UtcNow,
+        Summary: summary,
+        Items: results);
+
+    var reportPath = await _migrationReportWriter.WriteAsync(report, cancellationToken);
+
+    _logger.LogInformation("Migration summary:");
+    _logger.LogInformation("TotalRead: {TotalRead}", summary.TotalRead);
+    _logger.LogInformation("TotalEligible: {TotalEligible}", summary.TotalEligible);
+    _logger.LogInformation("TotalMigrated: {TotalMigrated}", summary.TotalMigrated);
+    _logger.LogInformation("TotalSkipped: {TotalSkipped}", summary.TotalSkipped);
+    _logger.LogInformation("TotalFailed: {TotalFailed}", summary.TotalFailed);
+    _logger.LogInformation("Report saved at: {ReportPath}", reportPath);
   }
 
   private static void ValidateInstance(ZabbixInstanceOptions options, string sectionName)

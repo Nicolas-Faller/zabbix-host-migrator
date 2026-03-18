@@ -1,0 +1,39 @@
+{
+  "SourceUrl": "https://mock-source-zabbix/api_jsonrpc.php",
+  "DestinationUrl": "https://mock-destination-zabbix/api_jsonrpc.php",
+  "DryRun": true,
+  "GeneratedAtUtc": "2026-03-18T14:26:20.5011654Z",
+  "Summary": {
+    "TotalRead": 3,
+    "TotalEligible": 2,
+    "TotalMigrated": 0,
+    "TotalSkipped": 1,
+    "TotalFailed": 0
+  },
+  "Items": [
+    {
+      "Host": "web-prod-01",
+      "VisibleName": "Web Prod 01",
+      "Action": "WouldCreate",
+      "Success": true,
+      "Message": "Dry run enabled. Host was not created.",
+      "CreatedHostId": null
+    },
+    {
+      "Host": "db-prod-01",
+      "VisibleName": "Database Prod 01",
+      "Action": "Skipped",
+      "Success": true,
+      "Message": "Host already exists in destination.",
+      "CreatedHostId": null
+    },
+    {
+      "Host": "web-dev-01",
+      "VisibleName": "Web Dev 01",
+      "Action": "WouldCreate",
+      "Success": true,
+      "Message": "Dry run enabled. Host was not created.",
+      "CreatedHostId": null
+    }
+  ]
+}

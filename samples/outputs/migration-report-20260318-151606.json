@@ -1,0 +1,39 @@
+{
+  "SourceUrl": "https://mock-source-zabbix/api_jsonrpc.php",
+  "DestinationUrl": "https://mock-destination-zabbix/api_jsonrpc.php",
+  "DryRun": false,
+  "GeneratedAtUtc": "2026-03-18T15:16:06.286033Z",
+  "Summary": {
+    "TotalRead": 3,
+    "TotalEligible": 2,
+    "TotalMigrated": 2,
+    "TotalSkipped": 1,
+    "TotalFailed": 0
+  },
+  "Items": [
+    {
+      "Host": "web-prod-01",
+      "VisibleName": "Web Prod 01",
+      "Action": "Migrated",
+      "Success": true,
+      "Message": "Host created in destination.",
+      "CreatedHostId": "89422"
+    },
+    {
+      "Host": "db-prod-01",
+      "VisibleName": "Database Prod 01",
+      "Action": "Skipped",
+      "Success": true,
+      "Message": "Host already exists in destination.",
+      "CreatedHostId": null
+    },
+    {
+      "Host": "web-dev-01",
+      "VisibleName": "Web Dev 01",
+      "Action": "Migrated",
+      "Success": true,
+      "Message": "Host created in destination.",
+      "CreatedHostId": "98207"
+    }
+  ]
+}

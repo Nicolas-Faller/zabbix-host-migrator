@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZabbixHostMigrator.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f1b0d2f8ce989f1b7856aaca5d2e16737e0f2ab0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2edc9e78dcdaad9044a9a36feb205c4c9267e463")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZabbixHostMigrator.IntegrationTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZabbixHostMigrator.IntegrationTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

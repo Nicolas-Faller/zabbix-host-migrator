@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
               new MediaTypeWithQualityHeaderValue("application/json"));
     });
 
+    services.AddScoped<ZabbixHostCreateRequestMapper>();
     services.AddScoped<IMigrationReportWriter, JsonMigrationReportWriter>();
 
     return services;

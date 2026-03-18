@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ZabbixHostMigrator.Application.Abstractions.Clients;
 using ZabbixHostMigrator.Application.Abstractions.Services;
 using ZabbixHostMigrator.Application.DTOs;
 
@@ -8,20 +9,23 @@ namespace ZabbixHostMigrator.Application.Services;
 public class MigrationRunner : IMigrationRunner
 {
   private readonly ILogger<MigrationRunner> _logger;
+  private readonly IZabbixApiClient _zabbixApiClient;
   private readonly IOptionsMonitor<ZabbixInstanceOptions> _zabbixOptionsMonitor;
   private readonly IOptions<MigrationOptions> _migrationOptions;
 
   public MigrationRunner(
       ILogger<MigrationRunner> logger,
+      IZabbixApiClient zabbixApiClient,
       IOptionsMonitor<ZabbixInstanceOptions> zabbixOptionsMonitor,
       IOptions<MigrationOptions> migrationOptions)
   {
     _logger = logger;
+    _zabbixApiClient = zabbixApiClient;
     _zabbixOptionsMonitor = zabbixOptionsMonitor;
     _migrationOptions = migrationOptions;
   }
 
-  public Task RunAsync(CancellationToken cancellationToken = default)
+  public async Task RunAsync(CancellationToken cancellationToken = default)
   {
     var source = _zabbixOptionsMonitor.Get("Source");
     var destination = _zabbixOptionsMonitor.Get("Destination");
@@ -38,9 +42,19 @@ public class MigrationRunner : IMigrationRunner
     _logger.LogInformation("HostNameContains: {HostNameContains}", migration.HostNameContains);
     _logger.LogInformation("SkipIfHostExists: {SkipIfHostExists}", migration.SkipIfHostExists);
     _logger.LogInformation("DryRun: {DryRun}", migration.DryRun);
-    _logger.LogInformation("Base project setup completed successfully.");
 
-    return Task.CompletedTask;
+    var sourceToken = await _zabbixApiClient.AuthenticateAsync(source, cancellationToken);
+    var destinationToken = await _zabbixApiClient.AuthenticateAsync(destination, cancellationToken);
+
+    _logger.LogInformation(
+        "Source authentication succeeded. Token length: {Length}",
+        sourceToken.Length);
+
+    _logger.LogInformation(
+        "Destination authentication succeeded. Token length: {Length}",
+        destinationToken.Length);
+
+    _logger.LogInformation("Authentication step completed successfully.");
   }
 
   private static void ValidateInstance(ZabbixInstanceOptions options, string sectionName)

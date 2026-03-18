@@ -13,3 +13,4 @@
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/refint/ZabbixHostMigrator.Application.dll
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.pdb
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ref/ZabbixHostMigrator.Application.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Application/obj/Debug/net8.0/ZabbixHostMigrator.Application.sourcelink.json

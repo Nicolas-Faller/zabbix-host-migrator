@@ -15,3 +15,4 @@
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Infrastructure/obj/Debug/net8.0/refint/ZabbixHostMigrator.Infrastructure.dll
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Infrastructure/obj/Debug/net8.0/ZabbixHostMigrator.Infrastructure.pdb
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Infrastructure/obj/Debug/net8.0/ref/ZabbixHostMigrator.Infrastructure.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Infrastructure/obj/Debug/net8.0/ZabbixHostMigrator.Infrastructure.sourcelink.json

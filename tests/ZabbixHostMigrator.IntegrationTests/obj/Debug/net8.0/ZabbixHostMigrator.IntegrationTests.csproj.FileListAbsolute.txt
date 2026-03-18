@@ -147,3 +147,4 @@
 /home/nicolas/Documents/zabbix-host-migrator/tests/ZabbixHostMigrator.IntegrationTests/obj/Debug/net8.0/ZabbixHostMigrator.IntegrationTests.pdb
 /home/nicolas/Documents/zabbix-host-migrator/tests/ZabbixHostMigrator.IntegrationTests/obj/Debug/net8.0/ZabbixHostMigrator.IntegrationTests.genruntimeconfig.cache
 /home/nicolas/Documents/zabbix-host-migrator/tests/ZabbixHostMigrator.IntegrationTests/obj/Debug/net8.0/ref/ZabbixHostMigrator.IntegrationTests.dll
+/home/nicolas/Documents/zabbix-host-migrator/tests/ZabbixHostMigrator.IntegrationTests/obj/Debug/net8.0/ZabbixHostMigrator.IntegrationTests.sourcelink.json

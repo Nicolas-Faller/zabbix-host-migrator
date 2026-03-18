@@ -9,3 +9,4 @@
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/refint/ZabbixHostMigrator.Domain.dll
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.pdb
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ref/ZabbixHostMigrator.Domain.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Domain/obj/Debug/net8.0/ZabbixHostMigrator.Domain.sourcelink.json

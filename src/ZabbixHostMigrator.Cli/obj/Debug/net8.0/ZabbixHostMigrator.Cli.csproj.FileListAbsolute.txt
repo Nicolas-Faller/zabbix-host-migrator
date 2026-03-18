@@ -58,3 +58,4 @@
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Cli/obj/Debug/net8.0/ZabbixHostMigrator.Cli.pdb
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Cli/obj/Debug/net8.0/ZabbixHostMigrator.Cli.genruntimeconfig.cache
 /home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Cli/obj/Debug/net8.0/ref/ZabbixHostMigrator.Cli.dll
+/home/nicolas/Documents/zabbix-host-migrator/src/ZabbixHostMigrator.Cli/obj/Debug/net8.0/ZabbixHostMigrator.Cli.sourcelink.json
